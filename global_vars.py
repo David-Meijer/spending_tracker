@@ -11,6 +11,7 @@ DATABASE_PREFIX = 'BudgetApp_DATABASE_'
 
 VALID_CATEGORIZED_DATABASE_ACTION_INPUTS  = {
     'add': ['a', 'add'],
+    'show': ['show'],
     'delete_row': ['dr', 'delete row'],
     'quit': ['q', 'quit'],
     'save': ['sv', 'save']
