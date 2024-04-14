@@ -28,12 +28,17 @@ class SessionDatabase:
         self.database_name = existing_database_name
         self.database = pl.read_csv(existing_databases[existing_database_name], schema=self.database_schema)
         print(f'opened database: {existing_database_name} \n')
-        self.next_database_index = (self.database.select(pl.max('index')).item() + 1) #https://docs.pola.rs/py-polars/html/reference/expressions/api/polars.max.html
-        print(f'counted {self.next_database_index} rows! \n') #begins at zero so the next index is equal to the amount of rows
-        print('populating category tree..\n')
-        self.fill_category_tree()
-        print('looking up all unique categories..\n')
-        self.fill_unique_categories()
+        #Only run when there are rows in the database
+        if len(self.database) > 0:
+            self.next_database_index = (self.database.select(pl.max('index')).item() + 1) #https://docs.pola.rs/py-polars/html/reference/expressions/api/polars.max.html
+            print(f'counted {self.next_database_index} rows! \n') #begins at zero so the next index is equal to the amount of rows
+            print('populating category tree..\n')
+            self.fill_category_tree()
+            print('looking up all unique categories..\n')
+            self.fill_unique_categories()
+        #Only run when the database is empty
+        else:
+            self.next_database_index = int(0)
 
     def create_new_database(self, new_database_name):
         self.database_name = new_database_name
@@ -110,12 +115,12 @@ class SessionDatabase:
         index_of_row_to_delete = self.ask_for_index_of_row_to_delete()
         if index_of_row_to_delete != 'abandon':
             print('\n You are about to delete the following row:')
-            print(self.database.slice(index_of_row_to_delete, index_of_row_to_delete))
-            #TODO: Implement functions
+            print(self.database.slice(index_of_row_to_delete, length=1))
+            #Ask if user really wants to delete the row
             if self.ask_for_confirmation():
-                print('TODO: Implement delete function')
-                #Implement function here
-                print('TODO: REBASE INDEX NUMBERS')
+                #If so, delete
+                self.delete_row_at_index(index_of_row_to_delete)
+                self.rebase_database_index()
 
     def ask_for_last_nr_of_rows_to_show(self):
         print('Please enter a number corresponding to the amount of last rows you want to see.')
@@ -148,6 +153,32 @@ class SessionDatabase:
 
         return index_of_row_to_delete
 
+    def delete_row_at_index(self, index_of_row_to_delete):
+        try:
+            self.database.row(index_of_row_to_delete)
+        except:
+            Print(f'error retrieving the to be deleted row at index {index_of_row_to_delete}, please try again')
+            #Note that recalling self.delete_function can only be done if this function is also triggered from the delete_row function.
+            self.delete_row() #try again. Non existing or false index given by user.
+        else:
+            #Remove row by creating two dataframen and stacking them again, not selecting the row at the index to be deleted
+            self.database = self.database[:index_of_row_to_delete].vstack(self.database[index_of_row_to_delete+1:])
+
+    def rebase_database_index(self):
+        #Function will recalculate index column (e.g. use when rows have been deleted)
+        #First remove index column and create a new one
+        self.database = (
+            self.database
+                .drop('index')
+                .select(
+                #Select new index column, then select all others
+                pl.int_range(pl.len(), dtype=pl.Int64).alias('index'),
+                pl.all()
+            )
+        )
+        #Reset next database index based on newly calculated column.
+        self.next_database_index = self.database.select(pl.max('index')).item() + 1
+
     def ask_for_confirmation(self):
         if input('please enter y/yes to confirm, anything else to abandon: ') in ['y', 'yes']:
             return True
@@ -166,3 +197,5 @@ class SessionDatabase:
             self.database.write_csv(file=file_path)
 
         print(f'saved database: {self.database_name}, path = {file_path}')
+
+
