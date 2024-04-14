@@ -56,9 +56,16 @@ def ask_new_database_name():
     return new_database_name
 
 def ask_for_action():
-    print()
-    print('What action do you want to perform?\n Press a/add to add a new expenditure.\n Press dr/"delete row" to delete a row.\n Press q/quit to quit.\n')
-    
+    #print()
+    #print('What action do you want to perform?\n Press a/add to add a new expenditure.\n Press dr/"delete row" to delete a row.\n Press sv/save to save.\n Press q/quit to save and quit.\n')
+    text = '''\n
+    What action do you want to perform?
+        Press a/add to add a new expenditure.
+        Press dr/"delete row" to delete a row.
+        Press sv/save to save.
+        Press q/quit to save and quit.
+    '''
+    print(text)
 #def checks_on_startup():
 #    os.makedirs(os.path.dirname(f'.{DATABASE_PATH}'), exist_ok=True)
 
