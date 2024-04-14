@@ -13,7 +13,7 @@ class SessionDatabase:
         self.unique_subcategories_2 = None #set of subcategory_2
         self.next_database_index = None #In order to keep track of the index. Is equal to the amount of rows as we begin with index = 0
         self.database_schema = {
-                'index': pl.UInt32, #TODO: right now in the delete, people can also give up negative index numbers.
+                'index': pl.Int64, #TODO: right now in the delete, people can also give up negative index numbers.
                 'amount': pl.Float64,
                 'category': pl.Utf8,
                 'subcategory_1': pl.Utf8,
@@ -149,7 +149,7 @@ class SessionDatabase:
         return index_of_row_to_delete
 
     def ask_for_confirmation(self):
-        if input('please enter yes to confirm, anything else to abandon: ') == 'yes':
+        if input('please enter y/yes to confirm, anything else to abandon: ') in ['y', 'yes']:
             return True
         else:
             return False
