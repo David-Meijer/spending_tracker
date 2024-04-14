@@ -1,4 +1,5 @@
 import polars as pl
+from datetime import datetime, date
 from global_vars import *
 
 #TODO: implement readline module: https://docs.python.org/3/library/readline.html, https://pymotw.com/2/readline/
@@ -18,8 +19,8 @@ class SessionDatabase:
                 'category': pl.Utf8,
                 'subcategory_1': pl.Utf8,
                 'subcategory_2': pl.Utf8,
-                'expenditure_date': pl.Utf8, #Dit moet nog naar date maar dat werkt nog niet met user input! GEBRUIK DATETIME MODULE
-                'entry_date': pl.Utf8 #TODO: Datetime maar dat werkt nog niet met user input!
+                'expenditure_date': pl.Date, #Dit moet nog naar date maar dat werkt nog niet met user input! GEBRUIK DATETIME MODULE
+                'entry_date': pl.Datetime #TODO: Datetime maar dat werkt nog niet met user input!
 
             }
 
@@ -65,6 +66,9 @@ class SessionDatabase:
     def handle_action(self, action):
         if action == 'add':
             self.add_expenditure()
+        elif action == 'show':
+            #possibly implement ask_for_last_nr_of_rows_to_show()
+            print(self.database)
         elif action == 'delete_row':
             self.delete_row()
         elif action == 'save':
@@ -88,8 +92,9 @@ class SessionDatabase:
             'subcategory_1': [subcategory_1],
             'subcategory_2': [subcategory_2],
             'expenditure_date': [expenditure_date],
-            'entry_date': [expenditure_date]
+            'entry_date': [datetime.now()]
             }
+
         )
         self.database = pl.concat([self.database, new_database_row])
         self.next_database_index += 1
@@ -107,9 +112,17 @@ class SessionDatabase:
         partial_question = 'please name the '
         return float(input(partial_question + 'amount: '))
 
-    #TODO: implement
     def ask_for_expenditure_date(self):
-        return '2023-12-20'
+        partial_question = 'please name the '
+        date_of_expenditure = str(input(partial_question + 'date of expenditure (dd-mm-yyyy) (PRESS ENTER TO USE TODAY\'S DATE): '))
+        if date_of_expenditure == '':
+            #get datetime.now and take only the day-month-year
+            date_of_expenditure = date.today() 
+        else:
+            #first cast string to datetime with strptime, then make it a date type.
+            date_of_expenditure = datetime.strptime(date_of_expenditure, '%d-%m-%Y').date()
+        return date_of_expenditure
+            
 
     def delete_row(self):
         last_nr_of_rows_to_show = self.ask_for_last_nr_of_rows_to_show()
