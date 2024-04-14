@@ -100,6 +100,7 @@ class SessionDatabase:
         partial_question = 'please name the '
         return float(input(partial_question + 'amount: '))
 
+    #TODO: implement
     def ask_for_expenditure_date(self):
         return '2023-12-20'
 
@@ -110,6 +111,7 @@ class SessionDatabase:
         if index_of_row_to_delete != 'abandon':
             print('\n You are about to delete the following row:')
             print(self.database.slice(index_of_row_to_delete, index_of_row_to_delete))
+            #TODO: Implement functions
             if self.ask_for_confirmation():
                 print('TODO: Implement delete function')
                 #Implement function here
