@@ -12,7 +12,8 @@ DATABASE_PREFIX = 'BudgetApp_DATABASE_'
 VALID_CATEGORIZED_DATABASE_ACTION_INPUTS  = {
     'add': ['a', 'add'],
     'delete_row': ['dr', 'delete row'],
-    'quit': ['q', 'quit']
+    'quit': ['q', 'quit'],
+    'save': ['sv', 'save']
 }
 
 VALID_DATABASE_ACTION_INPUTS = [v for category in VALID_CATEGORIZED_DATABASE_ACTION_INPUTS.values() for v in category]

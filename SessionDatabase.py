@@ -67,6 +67,8 @@ class SessionDatabase:
             self.add_expenditure()
         elif action == 'delete_row':
             self.delete_row()
+        elif action == 'save':
+            self.save_database()
         else: 
             raise ValueError (f'Action: {action} recognized as valid action input but no handler has been build. Update valid actions in the configuration or build action handler')
 
