@@ -8,14 +8,21 @@ from prompt_toolkit import prompt
 from completer import return_simple_completer #customized WordCompleter
 
 def get_existing_databases() -> dict:
-    database_files = {}
-    for file in os.listdir(DATABASE_PATH):
-        if file.startswith(DATABASE_PREFIX) and file.endswith(DATABASE_EXTENSION):
-            #clean with string slicing, stripping prefix and extension
-            clean_database_name = file[len(DATABASE_PREFIX):-len(DATABASE_EXTENSION)] 
-            #use cleaned database name as key and store full file path as value
-            database_files[clean_database_name] = DATABASE_PATH + '/' + file 
-    return database_files
+    try:
+        os.listdir(DATABASE_PATH)
+    except FileNotFoundError:
+        #There is no database folder yet. Create folder and return None
+        os.mkdir(DATABASE_PATH)
+        return {} #return empty dictionary (note database files exist yet)
+    else:
+        database_files = {}
+        for file in os.listdir(DATABASE_PATH):
+            if file.startswith(DATABASE_PREFIX) and file.endswith(DATABASE_EXTENSION):
+                #clean with string slicing, stripping prefix and extension
+                clean_database_name = file[len(DATABASE_PREFIX):-len(DATABASE_EXTENSION)] 
+                #use cleaned database name as key and store full file path as value
+                database_files[clean_database_name] = DATABASE_PATH + '/' + file 
+        return database_files
 
 def print_dictionary_keys(dictionary):
      for key in dictionary.keys():
