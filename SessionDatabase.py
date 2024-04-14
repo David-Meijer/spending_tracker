@@ -19,8 +19,8 @@ class SessionDatabase:
                 'category': pl.Utf8,
                 'subcategory_1': pl.Utf8,
                 'subcategory_2': pl.Utf8,
-                'expenditure_date': pl.Date, #Dit moet nog naar date maar dat werkt nog niet met user input! GEBRUIK DATETIME MODULE
-                'entry_date': pl.Datetime #TODO: Datetime maar dat werkt nog niet met user input!
+                'expenditure_date': pl.Date,
+                'entry_date': pl.Datetime
 
             }
 
